@@ -30,6 +30,7 @@ SET_GLOBAL_STR_DEF FILE_NAME, build.ccb
 .section .bss
 SET_GLOBAL_OBJ FILE_DESCRIPTOR
 SET_GLOBAL_OBJ input_buffer
+SET_GLOBAL_OBJ current_offset
 
 SET_GLOBAL_OBJ current_token_start
 SET_GLOBAL_OBJ current_token_length

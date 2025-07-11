@@ -8,6 +8,7 @@
 .extern error_opening_file
 .extern error_reading_file
 .extern error_closing_file
+.extern error_invalid_byte_scanned
 .extern no_error_exit
 
 .macro IF_CODE_IS_JMP_TO code, label
@@ -31,8 +32,9 @@ _start:
   IF_CODE_IS_JMP_TO ERROR(%rip), error_reading_file
 
   call close_file
-  If_CODE_IS_JMP_TO ERROR(%rip), error_closing_file
+  IF_CODE_IS_JMP_TO ERROR(%rip), error_closing_file
+
+  call find_next_token
+  IF_CODE_IS_JMP_TO ERROR(%rip), error_invalid_byte_scanned
 
   jmp no_error_exit
-
-

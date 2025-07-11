@@ -1,12 +1,1 @@
-src {
-  "main.s"
-  "test.s"
-}
-
-assemble src -> {
-  as -o %o %i
-}
-
-link {
-  ld -o kernel.elf %D 
-}
+src

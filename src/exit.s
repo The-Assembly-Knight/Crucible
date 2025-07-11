@@ -4,6 +4,7 @@
 .extern OPENING_ERROR
 .extern READING_ERROR
 .extern CLOSING_ERROR
+.extern INVALID_BYTE_ERROR
 
 .macro SET_GLOBAL_FUNC name
   .globl \name
@@ -28,7 +29,10 @@ SET_GLOBAL_FUNC error_closing_file
 error_closing_file:
   EXIT CLOSING_ERROR(%rip)
 
+SET_GLOBAL_FUNC error_invalid_byte_scanned
+error_invalid_byte_scanned:
+  EXIT INVALID_BYTE_ERROR(%rip)
+
 SET_GLOBAL_FUNC no_error_exit
 no_error_exit:
   EXIT NO_ERROR(%rip)
-  
