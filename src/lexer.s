@@ -2,8 +2,8 @@
 .extern ERROR
 
 .extern BYTES_TABLE
-.extern REGULAR_BYTE
-.extern DELIMITER_BYTE
+.extern WORD
+.extern DELIMITER
 
 .extern input_buffer
 .extern current_offset
@@ -41,6 +41,11 @@ continue_scanning:
   jmp scan_byte
 
 set_current_token_start:
+  leaq BYTES_TABLE(%rip), %rdx         # get BYTES_TABLE in rdx
+  movzbq (%rdx, %rax, 1), %rdx         # get type based on the look-up table BYTES_TABLE
+
+  movq %rdx, current_token_type(%rip)  # set current_token_type based on the prefix of the current token
+
   movq %rdi, current_token_start(%rip) # set current byte as the beginning of the current token
   jmp scan_byte
 
@@ -48,10 +53,10 @@ scan_byte:
   leaq BYTES_TABLE(%rip), %rdx
   movzbq (%rdx, %rax, 1), %rdx
 
-  cmpq REGULAR_BYTE(%rip), %rdx
+  cmpq WORD(%rip), %rdx
   jge regular_byte_scanned
 
-  cmpq DELIMITER_BYTE(%rip), %rdx
+  cmpq DELIMITER(%rip), %rdx
   je delimiter_byte_scanned
 
   jmp invalid_byte_scanned

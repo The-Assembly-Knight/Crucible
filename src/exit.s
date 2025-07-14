@@ -5,6 +5,8 @@
 .extern READING_ERROR
 .extern CLOSING_ERROR
 .extern INVALID_BYTE_ERROR
+.extern CLASSIFYING_ERROR
+.extern PARSING_ERROR
 
 .macro SET_GLOBAL_FUNC name
   .globl \name
@@ -32,6 +34,14 @@ error_closing_file:
 SET_GLOBAL_FUNC error_invalid_byte_scanned
 error_invalid_byte_scanned:
   EXIT INVALID_BYTE_ERROR(%rip)
+
+SET_GLOBAL_FUNC error_classifying_token
+error_classifying_token:
+  EXIT CLASSIFYING_ERROR(%rip)
+
+SET_GLOBAL_FUNC error_parsing
+error_parsing:
+  EXIT PARSING_ERROR(%rip)
 
 SET_GLOBAL_FUNC no_error_exit
 no_error_exit:

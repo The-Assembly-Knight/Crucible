@@ -1,0 +1,22 @@
+.macro SET_GLOBAL_OBJ name
+  .globl \name
+  .type \name, @object
+.endm
+
+.section .rodata
+SET_GLOBAL_OBJ THREE_LENGTH_SECTION
+THREE_LENGTH_SECTION:
+  .asciz "src"
+
+SET_GLOBAL_OBJ FOUR_LENGTH_SECTION
+FOUR_LENGTH_SECTION:
+  .asciz "link"
+
+SET_GLOBAL_OBJ FIVE_LENGTH_SECTION
+FIVE_LENGTH_SECTION:
+  .asciz "clean"
+
+SET_GLOBAL_OBJ EIGHT_LENGTH_SECTION
+EIGHT_LENGTH_SECTION:
+  .asciz "assemble"
+
