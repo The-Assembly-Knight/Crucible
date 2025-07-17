@@ -1,5 +1,11 @@
 .file "section_classifier.s"
 
+.extern NO_SECTION
+.extern SRC_SECTION
+.extern ASSEMBLE_SECTION
+.extern LINK_SECTION
+.extern CLEAN_SECTION
+
 .extern SECTIONS_TABLE
 .extern SECTIONS_AMOUNT
 .extern SECTIONS_LENGTH
@@ -52,10 +58,9 @@ compare_bytes:
   jne byte_did_not_match
 
 byte_match:
-  incq %r14                            # increase amount of byte matches
-  movzbq %r14b, %r14                   # zero extend r14 except last byte
+  incb %r14b                           # increase amount of byte matches
 
-  cmpq (%r9), %r14                     # if the amount of byte_matches matches the amount of bytes, then it is a section
+  cmpb (%r9), %r14b                    # if the amount of byte_matches matches the amount of bytes, then it is a section
   je section
 
   incq %r8                             # point to next byte of SECTIONS_TABLE
@@ -66,14 +71,14 @@ byte_match:
 
 byte_did_not_match:
   xorq %r14, %r14                      # reset byte_matches
+  jmp next_section
+
+next_section:
   incq %rcx                            # increase amount of scanned sections
 
   cmpq SECTIONS_AMOUNT(%rip), %rcx     # if all sections had been scanned it is not a section, otherwise check next section
   je no_section
-  jne next_section
 
-
-next_section:
   leaq SECTIONS_TABLE(%rip) , %r8       # point to the beginning of sections_table
   movzbq (%r9), %rsi                    # load section length to a temp register
   addq %rsi, %r15                       # add offset of sections_length
@@ -93,8 +98,3 @@ section:
 no_section:
   nop
   ret
-
-
-
-
-
