@@ -1,0 +1,100 @@
+.file "section_classifier.s"
+
+.extern SECTIONS_TABLE
+.extern SECTIONS_AMOUNT
+.extern SECTIONS_LENGTH
+
+.extern current_token_start
+.extern current_token_length
+
+.macro SET_GLOBAL_FUNC name
+  .globl \name
+  .type \name, @function
+.endm
+
+.macro RET_CODE ret_code
+  movq \ret_code, %rax
+  ret
+.endm
+
+.macro UPDATE_CURRENT_TOKEN_START 
+  leaq current_token_start(%rip), %r10 # point to the address of the beginning of the current token
+  movq (%r10), %r10                    # point to the beginning of the current token
+
+  movb (%r10), %al                    # get character r10 points to
+.endm
+
+SET_GLOBAL_FUNC classify_as_section
+classify_as_section:
+  xorq %rcx, %rcx                      # amount of sections checked
+  
+  leaq SECTIONS_TABLE(%rip), %r8       # point to sections table with r8
+  leaq SECTIONS_LENGTH(%rip),%r9       # point to a list of the length of each section
+
+  UPDATE_CURRENT_TOKEN_START
+
+  movq current_token_length(%rip), %r11# get the length of the current token
+  movzbq %r11b, %r11                   # zero extent except for last byte
+
+  xorq %r14, %r14                      # clean to use it as a counter of byte_matches
+  xorq %r15, %r15                      # clean to use it as offset in bytes
+
+compare_strings:
+  movzbq (%r9), %rsi
+  cmpq %rsi, %r11                     # compare section length with token length
+  jne next_section
+  
+  jmp compare_bytes
+
+compare_bytes:
+  cmpb (%r8), %al                     # compare the byte on SECTION_TABLE with the correspondent byte of current_token
+  je byte_match
+  jne byte_did_not_match
+
+byte_match:
+  incq %r14                            # increase amount of byte matches
+  movzbq %r14b, %r14                   # zero extend r14 except last byte
+
+  cmpq (%r9), %r14                     # if the amount of byte_matches matches the amount of bytes, then it is a section
+  je section
+
+  incq %r8                             # point to next byte of SECTIONS_TABLE
+  incq %r10                            # point to next byte of current_token
+  movb (%r10), %al                     # save the char r10 points to in al
+
+  jne compare_bytes
+
+byte_did_not_match:
+  xorq %r14, %r14                      # reset byte_matches
+  incq %rcx                            # increase amount of scanned sections
+
+  cmpq SECTIONS_AMOUNT(%rip), %rcx     # if all sections had been scanned it is not a section, otherwise check next section
+  je no_section
+  jne next_section
+
+
+next_section:
+  leaq SECTIONS_TABLE(%rip) , %r8       # point to the beginning of sections_table
+  movzbq (%r9), %rsi                    # load section length to a temp register
+  addq %rsi, %r15                       # add offset of sections_length
+
+  addq %r15, %r8                        # add offset to point to the beginning of the next string
+
+  incq %r9                              # point to the next section's length in SECTION_LENGTH      
+
+  UPDATE_CURRENT_TOKEN_START
+
+  jmp compare_strings
+
+section:
+  nop
+  ret
+
+no_section:
+  nop
+  ret
+
+
+
+
+

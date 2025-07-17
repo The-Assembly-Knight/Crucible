@@ -1,10 +1,7 @@
 .extern NO_ERROR
 .extern ERROR
 
-.extern THREE_LENGTH_SECTION
-.extern FOUR_LENGTH_SECTION
-.extern FIVE_LENGTH_SECTION
-.extern EIGHT_LENGTH_SECTION
+.extern classify_as_section
 
 .extern STRING
 .extern SRC_SECTION
@@ -58,6 +55,7 @@ classify_token:
   jmp error
 
 classify_word:
+  call classify_as_section
   jmp string
 
 classify_sign:
