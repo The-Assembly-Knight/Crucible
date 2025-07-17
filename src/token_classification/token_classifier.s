@@ -4,6 +4,7 @@
 .extern classify_as_section
 
 .extern STRING
+.extern NO_SECTION
 .extern SRC_SECTION
 .extern ASSEMBLE_SECTION
 .extern LINK_SECTION
@@ -31,6 +32,11 @@
   je  \label
 .endm
 
+.macro IF_CODE_IS_NOT_JMP_TO code, label
+  cmpq \code, %rax
+  jne \label
+.endm
+
 .macro DEFINE_AS type
   push %rdx
 
@@ -56,6 +62,8 @@ classify_token:
 
 classify_word:
   call classify_as_section
+  IF_CODE_IS_NOT_JMP_TO NO_SECTION(%rip), section
+
   jmp string
 
 classify_sign:
@@ -83,6 +91,10 @@ opening_brace:
 
 closing_brace:
   DEFINE_AS CLOSE_SECTION(%rip)
+  jmp no_error
+
+section:
+  DEFINE_AS %rax
   jmp no_error
 
 string:

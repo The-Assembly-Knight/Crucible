@@ -61,7 +61,7 @@ byte_match:
   incb %r14b                           # increase amount of byte matches
 
   cmpb (%r9), %r14b                    # if the amount of byte_matches matches the amount of bytes, then it is a section
-  je section
+  je a_section
 
   incq %r8                             # point to next byte of SECTIONS_TABLE
   incq %r10                            # point to next byte of current_token
@@ -77,7 +77,7 @@ next_section:
   incq %rcx                            # increase amount of scanned sections
 
   cmpq SECTIONS_AMOUNT(%rip), %rcx     # if all sections had been scanned it is not a section, otherwise check next section
-  je no_section
+  je not_a_section
 
   leaq SECTIONS_TABLE(%rip) , %r8       # point to the beginning of sections_table
   movzbq (%r9), %rsi                    # load section length to a temp register
@@ -91,10 +91,32 @@ next_section:
 
   jmp compare_strings
 
-section:
-  nop
-  ret
+a_section:
+  cmpq $0, %rcx                        # if it only scanned the first section (src) then it is a token SRC_SECTION type
+  je src_section
+  
+  cmpq $1, %rcx                        # the same as above but with assemble section
+  je assemble_section
 
-no_section:
-  nop
-  ret
+  cmpq $2, %rcx                        # the same as above but with link section
+  je link_section
+
+  cmpq $3, %rcx                        # the same as above but with the clean section
+  je clean_section
+
+  jmp not_a_section                       # in case the above comparations fail this will prevet the error from silently break everything
+
+src_section:
+  RET_CODE SRC_SECTION(%rip)
+
+assemble_section:
+  RET_CODE ASSEMBLE_SECTION(%rip)
+
+link_section:
+  RET_CODE LINK_SECTION(%rip)
+
+clean_section:
+  RET_CODE CLEAN_SECTION(%rip)
+
+not_a_section:
+  RET_CODE NO_SECTION(%rip)
