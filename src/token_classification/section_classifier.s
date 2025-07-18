@@ -109,7 +109,7 @@ a_section:
 a_src_section:
   RET_CODE SRC_SECTION(%rip)
 
-am_assemble_section:
+an_assemble_section:
   RET_CODE ASSEMBLE_SECTION(%rip)
 
 a_link_section:
