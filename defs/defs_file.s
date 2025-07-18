@@ -37,4 +37,4 @@ SET_GLOBAL_OBJ current_token_length
 SET_GLOBAL_OBJ current_token_type
 
 SET_GLOBAL_OBJ current_section
-SET_GLOBAL_OBJ current_section_state
+SET_GLOBAL_OBJ expected_type

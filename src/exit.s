@@ -39,8 +39,8 @@ SET_GLOBAL_FUNC error_classifying_token
 error_classifying_token:
   EXIT CLASSIFYING_ERROR(%rip)
 
-SET_GLOBAL_FUNC error_parsing
-error_parsing:
+SET_GLOBAL_FUNC error_parsing_token
+error_parsing_token:
   EXIT PARSING_ERROR(%rip)
 
 SET_GLOBAL_FUNC no_error_exit

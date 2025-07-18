@@ -6,6 +6,7 @@
 .extern close_file
 .extern find_next_token
 .extern classify_token
+.extern parse_token
 
 .extern error_opening_file
 .extern error_reading_file
@@ -44,5 +45,8 @@ processing_file_loop:
   
   call classify_token
   IF_CODE_IS_JMP_TO ERROR(%rip), error_classifying_token
+
+  call parse_token
+  IF_CODE_IS_JMP_TO ERROR(%rip), error_parsing_token
 
   jmp no_error_exit

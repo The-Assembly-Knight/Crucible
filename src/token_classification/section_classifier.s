@@ -93,29 +93,29 @@ next_section:
 
 a_section:
   cmpq $0, %rcx                        # if it only scanned the first section (src) then it is a token SRC_SECTION type
-  je src_section
+  je a_src_section
   
   cmpq $1, %rcx                        # the same as above but with assemble section
-  je assemble_section
+  je an_assemble_section
 
   cmpq $2, %rcx                        # the same as above but with link section
-  je link_section
+  je a_link_section
 
   cmpq $3, %rcx                        # the same as above but with the clean section
-  je clean_section
+  je a_clean_section
 
   jmp not_a_section                       # in case the above comparations fail this will prevet the error from silently break everything
 
-src_section:
+a_src_section:
   RET_CODE SRC_SECTION(%rip)
 
-assemble_section:
+am_assemble_section:
   RET_CODE ASSEMBLE_SECTION(%rip)
 
-link_section:
+a_link_section:
   RET_CODE LINK_SECTION(%rip)
 
-clean_section:
+a_clean_section:
   RET_CODE CLEAN_SECTION(%rip)
 
 not_a_section:
