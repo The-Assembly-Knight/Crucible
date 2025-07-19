@@ -75,7 +75,7 @@ delimiter_byte_scanned:
 
   cmpq $0, current_token_length(%rip)  # if current token length is 0 then keep scanning since a token cant be < 0 length
   je continue_scanning
-  
+ 
   jmp return_token
 
 file_end_scanned:
