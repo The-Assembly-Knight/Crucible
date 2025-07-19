@@ -13,7 +13,7 @@
 
 SET_GLOBAL_OBJ BYTES_TABLE
 BYTES_TABLE:
-  .byte DELIMITER                  # line 15 = \0
+  .byte SIGN                  # line 15 = \0
   .byte INVALID
   .byte INVALID
   .byte INVALID
@@ -21,7 +21,7 @@ BYTES_TABLE:
   .byte INVALID
   .byte INVALID
   .byte INVALID
-  .byte INVALID
+  .byte DELIMITER
   .byte DELIMITER
   .byte DELIMITER
   .byte INVALID

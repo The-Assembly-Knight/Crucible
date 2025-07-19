@@ -23,6 +23,7 @@
 .endm
 
 .section .rodata
+
 SET_GLOBAL_DEF MAX_FILE_SIZE, 65536
 SET_GLOBAL_STR_DEF FILE_NAME, build.ccb
 
@@ -38,3 +39,5 @@ SET_GLOBAL_OBJ current_token_type
 
 SET_GLOBAL_OBJ current_section
 SET_GLOBAL_OBJ expected_type
+
+SET_GLOBAL_OBJ src_file_list_offset

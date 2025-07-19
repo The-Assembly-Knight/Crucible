@@ -79,6 +79,9 @@ classify_sign:
   cmpq CLOSING_BRACE(%rip), %r8
   je closing_brace
 
+  cmpq FILE_END(%rip), %r8
+  je file_end
+
   jmp error
 
 equal_sign:
@@ -91,6 +94,10 @@ opening_brace:
 
 closing_brace:
   DEFINE_AS CLOSE_SECTION(%rip)
+  jmp no_error
+
+file_end:
+  DEFINE_AS FILE_END(%rip)
   jmp no_error
 
 section:

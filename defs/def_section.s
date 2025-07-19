@@ -6,6 +6,7 @@
   .quad \value
 .endm
 
+
 # Section Types
 SET_GLOBAL_DEF NO_SECTION      , 0
 SET_GLOBAL_DEF SRC_SECTION     , 1

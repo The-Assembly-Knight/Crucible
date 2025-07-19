@@ -35,7 +35,7 @@ continue_scanning:
 
   leaq current_token_start(%rip), %rdx # point to current_token_start with rdx
 
-  cmpq $0, current_token_length        # if the length of the token is 0, set this byte as the beginning of the current token
+  cmpq $0, current_token_length(%rip)  # if the length of the token is 0, set this byte as the beginning of the current token
   je set_current_token_start
 
   jmp scan_byte
@@ -53,6 +53,9 @@ scan_byte:
   leaq BYTES_TABLE(%rip), %rdx
   movzbq (%rdx, %rax, 1), %rdx
 
+  cmpq FILE_END(%rip), %rax            # if byte is the end of the file (\0) jmp to file_end_scanned
+  je file_end_scanned
+
   cmpq WORD(%rip), %rdx
   jge regular_byte_scanned
 
@@ -69,6 +72,17 @@ regular_byte_scanned:
 
 delimiter_byte_scanned:
   incq current_offset(%rip)
+
+  cmpq $0, current_token_length(%rip)  # if current token length is 0 then keep scanning since a token cant be < 0 length
+  je continue_scanning
+  
+  jmp return_token
+
+file_end_scanned:
+  incq current_token_length(%rip)      # increase the length of the current token (\0 = 1 length)
+  jmp return_token
+
+return_token:
   RET_CODE NO_ERROR(%rip)              # since it is the end of the current token, go back without any errors
 
 invalid_byte_scanned:

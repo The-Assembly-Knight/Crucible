@@ -1,5 +1,8 @@
+.file "parser.s"
+
 .extern NO_ERROR
 .extern ERROR
+.extern FILE_END_CODE
 
 .extern current_token_start
 .extern current_token_length
@@ -41,6 +44,13 @@
   movq \type, (%rsi)
 .endm
 
+.macro IF_CODE_IS_JMP_TO code, label
+  cmpq \code, %rax
+  je \label
+.endm
+
+.section .text
+
 SET_GLOBAL_FUNC parse_token
 parse_token:
   leaq current_token_start(%rip), %rax
@@ -57,18 +67,12 @@ parse_token:
   JUMP_TO_ON_SECTION clean_section   , CLEAN_SECTION(%rip)
   
 no_section:
+  cmpq FILE_END(%rip), %rdx
+  je found_file_end
+
   cmpq SECTION(%rip), %rdx             # check if current token type is a section or not
   jg found_new_section                 # if it is a section jmp to found_new_section
   jng error                            # if it is not a section take it as an error     
-
-src_section:
-  
-
-assemble_section:
-
-link_section:
-
-clean_section:
 
 found_new_section:
   movq OPEN_SECTION(%rip), %rsi        # use rsi as a temporal reg for OPEN_SECTION
@@ -78,6 +82,24 @@ found_new_section:
 
   jmp no_error
 
+src_section:
+  call process_src_section
+  IF_CODE_IS_JMP_TO ERROR(%rip), error
+
+  jmp no_error
+
+assemble_section:
+  jmp error
+
+link_section:
+  jmp error
+
+clean_section:
+  jmp error
+
+found_file_end:
+  RET_CODE FILE_END_CODE(%rip)
+
 no_error:
   movq $0, (%rcx)                      # reset current token length (for the next token) NOTE: I COULD ALSO HAVE TRIED TO DO THIS ON THE BEGINNING OF THE TOKENIZER!!!
                                        # DO NOT FORGET TO RESET TOKEN_LEN AFTER PARSING THE TOKEN IT
@@ -85,4 +107,3 @@ no_error:
 
 error:
   RET_CODE ERROR(%rip)
-
