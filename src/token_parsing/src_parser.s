@@ -13,6 +13,10 @@
 .extern src_file_list
 .extern src_file_list_offset
 
+.extern MAX_FILES_AMOUNT
+.extern TOKEN_START_SIZE
+.extern TOKEN_LENGTH_SIZE
+
 .macro RET_CODE ret_code
   movq \ret_code, %rax
   ret
@@ -62,7 +66,7 @@ expected_close_section_in_src:
   jne error
 
 add_string_to_src_list:
-  # ADD A COMPARE TO PREVENT OVERFLOW (ADD A GLOBAL CONST FOR THE MAX AMOUNT OF FILES IN SRC, PUT THE DEF IN defs.s)
+  #************* ADD A COMPARE TO PREVENT OVERFLOW (ADD A GLOBAL CONST FOR THE MAX AMOUNT OF FILES IN SRC, PUT THE DEF IN defs.s)
   # AND ADD STRING TO SRC LIST BUT FIRST TEST IF THE PROGRAM CAN REACH THIS POINT  
   jmp no_error
 

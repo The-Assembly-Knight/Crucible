@@ -22,6 +22,14 @@
   .quad 0
 .endm
 
+.macro SET_GLOBAL_OBJ_WITH_SKIP name, skip
+  .globl \name
+  .type \name, @object
+
+  \name:
+  .skip \skip
+.endm
+
 .section .rodata
 
 SET_GLOBAL_DEF MAX_FILE_SIZE, 65536
@@ -30,9 +38,8 @@ SET_GLOBAL_STR_DEF FILE_NAME, build.ccb
 
 .section .bss
 SET_GLOBAL_OBJ FILE_DESCRIPTOR
-SET_GLOBAL_OBJ input_buffer
+SET_GLOBAL_OBJ_WITH_SKIP input_buffer, 65536
 
-.align 256
 SET_GLOBAL_OBJ current_offset
 
 SET_GLOBAL_OBJ current_token_start
